@@ -55,11 +55,20 @@ interface FontConfig {
 }
 
 export type Button = {
-  enable: boolean;
+  enable?: boolean;
   label: string;
   url: string;
   rel?: string;
   target?: string;
+  hoverEffect?:
+    | "text-flip"
+    | "creative-fill"
+    | "magnetic"
+    | "magnetic-text-flip";
+  variant?: "fill" | "outline" | "text" | "circle";
+  tag?: "a" | "button";
+  class?: string;
+  icon?: string;
 };
 
 export type Section = {

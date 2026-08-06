@@ -1,6 +1,6 @@
 ---
 enable: true # Control the visibility of this section across all pages where it is used
-title: ""
+title: "Entreprises que nous avons aidées"
 
 list:
   - alt: "example alt text"

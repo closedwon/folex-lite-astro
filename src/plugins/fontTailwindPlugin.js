@@ -24,10 +24,16 @@ import plugin from "tailwindcss/plugin";
 import fontFamily from "../config/fonts.json";
 
 const fontFamilies = Object.fromEntries(
-  fontFamily.map((font) => [
-    font.cssVariable?.replace("--font-", "") || font.name.toLowerCase(),
-    `${font.name}, ${font.fallback || "sans-serif"}`,
-  ]),
+  fontFamily.map((font) => {
+    const name =
+      font.name.includes(" ") || font.name.includes(",")
+        ? `"${font.name}"`
+        : font.name;
+    return [
+      font.cssVariable?.replace("--font-", "") || font.name.toLowerCase(),
+      `${name}, ${font.fallback || "sans-serif"}`,
+    ];
+  }),
 );
 
 const fontVars = Object.fromEntries(

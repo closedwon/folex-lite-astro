@@ -105,11 +105,13 @@ export const pricingSectionSchema = z
         enable: z.boolean().default(false),
         name: z.string(),
         description: z.string(),
-        price: z.object({
-          prependValue: z.string(),
-          value: z.string(),
-          appendValue: z.string(),
-        }),
+        price: z
+          .object({
+            prependValue: z.string(),
+            value: z.string(),
+            appendValue: z.string(),
+          })
+          .optional(),
         features: z.array(z.string()),
         button,
       }),
@@ -171,7 +173,7 @@ export const bannerAgencySectionSchema = z
   .object({
     enable: z.boolean().default(false).optional(),
     titleSize: z.enum(["display-1", "display-2", "display-3"]).optional(),
-    title: z.array(z.string()).optional(),
+    title: z.union([z.string(), z.array(z.string())]).optional(),
     badge: z
       .object({
         enable: z.boolean().default(false).optional(),
@@ -183,9 +185,40 @@ export const bannerAgencySectionSchema = z
   })
   .optional();
 
+export const introSectionSchema = z
+  .object({
+    enable: z.boolean().default(false).optional(),
+    title: z.string().optional(),
+    description: z.string().optional(),
+    image: z.string().optional(),
+    button: button.optional(),
+    secondaryButton: button.optional(),
+  })
+  .optional();
+
+export const highlightCardsSectionSchema = z
+  .object({
+    enable: z.boolean().default(false).optional(),
+    title: z.string().optional(),
+    list: z
+      .array(
+        z.object({
+          title: z.string().optional(),
+          description: z.string().optional(),
+          image: z.string().optional(),
+          linkLabel: z.string().optional(),
+          url: z.string().optional(),
+        }),
+      )
+      .optional(),
+  })
+  .optional();
+
 export const sectionsSchema = {
   servicesSection: servicesSectionSchema,
   clientsSection: clientsSectionSchema,
   bannerAgencySection: bannerAgencySectionSchema,
   pricingSection: pricingSectionSchema,
+  introSection: introSectionSchema,
+  highlightCardsSection: highlightCardsSectionSchema,
 };

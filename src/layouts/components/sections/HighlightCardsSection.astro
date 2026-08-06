@@ -1,0 +1,75 @@
+---
+import type { z } from "astro/zod";
+import type { Section } from "@/types";
+import { getEntryCTM } from "@/lib/contentParser.astro";
+import { markdownify } from "@/lib/utils/textConverter";
+import overrideObjects from "@/lib/utils/overrideObjects.ts";
+import type { highlightCardsSectionSchema } from "@/sections.schema";
+import OptimizedImage from "@/components/utilities/OptimizedImage.astro";
+
+type HighlightCardsSection = Section &
+  NonNullable<z.infer<typeof highlightCardsSectionSchema>>;
+
+type Props = {
+  content?: HighlightCardsSection;
+};
+
+let defaultContent = (
+  await getEntryCTM("sections", "highlight-cards-section", Astro.currentLocale)
+)?.data as HighlightCardsSection;
+
+let actualContent = overrideObjects(
+  { ...defaultContent },
+  Astro.props.content,
+) as HighlightCardsSection;
+
+let { enable = true, title, list } = actualContent || {};
+
+if (!enable) {
+  return null;
+}
+---
+
+<section id="highlights">
+  <div class="container space-y-10 md:space-y-14">
+    {
+      title && (
+        <h2 class="text-h1-sm md:text-h1" set:html={markdownify(title)} />
+      )
+    }
+
+    <div class="grid grid-cols-1 gap-6 md:grid-cols-3">
+      {
+        list?.map((card) => (
+          <article class="bg-theme-light flex h-full flex-col space-y-5 p-6 md:p-8">
+            {card.image && (
+              <OptimizedImage
+                src={card.image}
+                alt={card.title || "Highlight"}
+                class="h-44 w-full object-cover"
+              />
+            )}
+            <div class="flex grow flex-col space-y-3">
+              {card.title && (
+                <h3
+                  class="text-h5 md:text-h4"
+                  set:html={markdownify(card.title)}
+                />
+              )}
+              {card.description && (
+                <p set:html={markdownify(card.description)} />
+              )}
+              {card.url && card.linkLabel && (
+                <a
+                  href={card.url}
+                  class="font-secondary mt-auto inline-flex pt-2 text-sm font-medium uppercase text-dark underline-offset-4 hover:underline">
+                  {card.linkLabel}
+                </a>
+              )}
+            </div>
+          </article>
+        ))
+      }
+    </div>
+  </div>
+</section>

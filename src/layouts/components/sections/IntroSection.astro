@@ -1,0 +1,91 @@
+---
+import type { z } from "astro/zod";
+import type { Section } from "@/types";
+import { getEntryCTM } from "@/lib/contentParser.astro";
+import { markdownify } from "@/lib/utils/textConverter";
+import CustomButton from "@/components/CustomButton.astro";
+import overrideObjects from "@/lib/utils/overrideObjects.ts";
+import type { introSectionSchema } from "@/sections.schema";
+import OptimizedImage from "@/components/utilities/OptimizedImage.astro";
+
+type IntroSection = Section & NonNullable<z.infer<typeof introSectionSchema>>;
+
+type Props = {
+  content?: IntroSection;
+};
+
+let defaultContent = (
+  await getEntryCTM("sections", "intro-section", Astro.currentLocale)
+)?.data as IntroSection;
+
+let actualContent = overrideObjects(
+  { ...defaultContent },
+  Astro.props.content,
+) as IntroSection;
+
+let {
+  enable = true,
+  title,
+  description,
+  image,
+  button,
+  secondaryButton,
+} = actualContent || {};
+
+if (!enable) {
+  return null;
+}
+---
+
+<section class="pt-36 md:pt-44">
+  <div class="container space-y-12 md:space-y-16">
+    <div class="w-full space-y-6 lg:w-3/5">
+      {
+        title && (
+          <h1
+            class="text-display-5 md:text-display-3 xl:text-display-2"
+            set:html={markdownify(title)}
+          />
+        )
+      }
+      {
+        description && (
+          <p class="text-lg" set:html={markdownify(description)} />
+        )
+      }
+      {
+        (button?.enable || secondaryButton?.enable) && (
+          <div class="flex flex-wrap items-center gap-4 pt-2">
+            {button?.enable && (
+              <CustomButton
+                hoverEffect="creative-fill"
+                class="btn-accent effect-color-dark"
+                {...button}
+              />
+            )}
+            {secondaryButton?.enable && (
+              <CustomButton
+                variant="outline"
+                hoverEffect="text-flip"
+                class="btn-primary"
+                {...secondaryButton}
+              />
+            )}
+          </div>
+        )
+      }
+    </div>
+
+    {
+      image && (
+        <div class="mx-auto max-w-4xl">
+          <OptimizedImage
+            src={image}
+            alt={title || "Illustration"}
+            class="h-80 w-full object-cover md:h-110"
+          />
+        </div>
+      )
+    }
+  </div>
+</section>

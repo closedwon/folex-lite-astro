@@ -37,7 +37,7 @@ const {
               set:html={markdownify(name)}
             />
           )}
-          {price && (
+          {price && (price.value || price.prependValue) && (
             <div class="sm:text-display-5 text-display-6 md:text-display-4 font-secondary font-semibold text-black">
               {price.prependValue}
               {price.value}
